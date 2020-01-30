@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NPuzzle</string>
+    <string name="go_to_puzzle">Go To Puzzle</string>
+    <string name="button">Button</string>
+    <string name="hello_world">hello world</string>
+    <string name="button_go">button go</string>
+</resources>
