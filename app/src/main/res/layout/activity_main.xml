@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="10dp" xmlns:tools="http://schemas.android.com/tools" tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="74dp"
+        android:layout_height="31dp"
         android:text="@string/app_name" />
 
     <TableLayout
         android:id="@+id/tableForButtons"
-        android:layout_width="360dp"
+        android:layout_width="387dp"
         android:layout_height="514dp"
         android:layout_below="@+id/textView1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="22dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="28dp"
         android:stretchColumns="*">
 
     </TableLayout>
+
+    <TextView
+        android:id="@+id/showNumberOfMoves"
+        android:layout_width="74dp"
+        android:layout_height="31dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="3dp"
+        android:layout_marginRight="3dp" />
 
 </RelativeLayout>

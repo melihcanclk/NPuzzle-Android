@@ -9,10 +9,8 @@
 
     <Button
         android:id="@+id/button_start"
-        android:layout_width="140dp"
-        android:layout_height="87dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginLeft="22dp"
+        android:layout_width="148dp"
+        android:layout_height="85dp"
         android:layout_marginEnd="124dp"
         android:layout_marginRight="124dp"
         android:text="start"
