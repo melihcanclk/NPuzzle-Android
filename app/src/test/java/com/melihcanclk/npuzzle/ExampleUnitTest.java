@@ -1,4 +1,4 @@
-package com.example.npuzzle;
+package com.melihcanclk.npuzzle;
 
 import org.junit.Test;
 

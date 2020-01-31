@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main_Menu"
+    tools:context="com.melihcanclk.npuzzle.Main_Menu"
     tools:layout_editor_absoluteY="81dp">
 
     <Button
