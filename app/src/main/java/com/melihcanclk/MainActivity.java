@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,8 +22,11 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
-    private static final int NUM_ROWS = 7;
-    private static final int NUM_COLUMNS = 7;
+    private static int columns;
+    private static int rows;
+
+    private static String COLUMN_NAME = "com.example.npuzzle/com.melihcanclk.MainActivity - column";
+    private static String ROW_NAME = "com.melihcanclk - row";
 
     public static final int SWIPE_THRESHOLD = 100;
     public static final int SWIPE_VELOCITY_THRESHOLD = 100;
@@ -37,14 +42,21 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     TableLayout table;
     TextView textViewCounter;
-    TextView[][] textView = new TextView[NUM_ROWS][NUM_COLUMNS];
+    TextView[][] textView;
+    Button resetButton;
+    Button hintButton;
 
     private int[] coordinatesOfSpace = new int[2];
 
     GestureDetector gestureDetector;
 
-    public static Intent makeIntent(Context context) {
-        return new Intent(context, MainActivity.class);
+    public static Intent makeIntent(Context context,int column, int row) {
+        Intent intent = new Intent(context, MainActivity.class);
+
+        intent.putExtra(COLUMN_NAME, column);
+        intent.putExtra(ROW_NAME, row);
+
+        return intent;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -53,11 +65,49 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        extractDataFromIntent();
         gestureDetector = new GestureDetector(this);
 
         textViewCounter = (TextView) findViewById(R.id.showNumberOfMoves);
         textViewCounter.setText(String.valueOf(_numberOfMoves));
+
+        resetButton = (Button) findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onClick(View v) {
+                _numberOfMoves = 0;
+                textViewCounter.setText(String.valueOf(_numberOfMoves));
+                Integer counter = 1;
+                for (int i = 0; i < rows; ++i) {
+                    for (int j = 0; j < columns; ++j) {
+                       textView[i][j].setText(counter.toString());
+                        if (i == rows - 1 && j == columns - 1) {
+                            textView[i][j].setText(" ");
+                            coordinatesOfSpace[1] = i;
+                            coordinatesOfSpace[0] = j;
+                        }
+                       ++counter;
+                    }
+                }
+
+            }
+        });
+
+        hintButton = (Button) findViewById(R.id.hintButton);
+
         createButtons();
+    }
+
+    private void extractDataFromIntent() {
+
+        /*Get data from Main_Menu that got from user to create rows and columns*/
+        Intent intent = getIntent();
+        columns = intent.getIntExtra(COLUMN_NAME, 3);
+        rows = intent.getIntExtra(ROW_NAME,3);
+
+        textView = new TextView[rows][columns];
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -66,14 +116,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         table = (TableLayout) findViewById(R.id.tableForButtons);
 
         Integer counter = 1;
-        for (int i = 0; i < NUM_ROWS; ++i) {
+        for (int i = 0; i < rows; ++i) {
             TableRow tableRow = new TableRow(this);
             tableRow.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
                     1.0f));
             table.addView(tableRow);
-            for (int j = 0; j < NUM_COLUMNS; ++j) {
+            for (int j = 0; j < columns; ++j) {
                 final int FINAL_I = i;
                 final int FINAL_J = j;
                 TextView tempTextView = new TextView(this);
@@ -92,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     }
                 });*/
                 tableRow.addView(tempTextView);
-                if (i == NUM_ROWS - 1 && j == NUM_COLUMNS - 1) {
+                if (i == rows - 1 && j == columns - 1) {
                     tempTextView.setText(" ");
                     coordinatesOfSpace[1] = i;
                     coordinatesOfSpace[0] = j;
@@ -155,11 +205,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if ((direction == 'L' || direction == 'l') && coordinatesOfSpace[0] - 1 >= 0) {
             return true;
             // TODO : size 0 and size 1 add
-        } else if ((direction == 'R' || direction == 'r') && coordinatesOfSpace[0] + 1 < NUM_ROWS) {
+        } else if ((direction == 'R' || direction == 'r') && coordinatesOfSpace[0] + 1 < rows) {
             return true;
         } else if ((direction == 'U' || direction == 'u') && coordinatesOfSpace[1] - 1 >= 0) {
             return true;
-        } else if ((direction == 'D' || direction == 'd') && coordinatesOfSpace[1] + 1 < NUM_COLUMNS) {
+        } else if ((direction == 'D' || direction == 'd') && coordinatesOfSpace[1] + 1 < columns) {
             return true;
         } else {
             return false;
@@ -198,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     }
 
-
+//onFling Function for being able to imageview swipe
     @Override
     public boolean onFling(MotionEvent downEvent, MotionEvent moveEvent, float velocityX, float velocityY) {
         boolean result = false;
