@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-TRYTIME = 100
+TRYTIME = 199
 
 lastmove = 'S'
 
@@ -9,16 +9,16 @@ moves = ['L', 'R', 'U', 'D']
 
 def move(x, direction):
     if direction == 'R':
-        x[holdSpace[1]][holdSpace[0]], x[holdSpace[1]][holdSpace[0]+1] =  x[holdSpace[1]][holdSpace[0]+1], x[holdSpace[1]][holdSpace[0]]
+        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]*holdSpace[0]+1] =  x[holdSpace[1]*holdSpace[0]+1], x[holdSpace[1]*holdSpace[0]]
         holdSpace[0] = holdSpace[0]+1
     elif direction == 'L':
-        x[holdSpace[1]][holdSpace[0]], x[holdSpace[1]][holdSpace[0]-1] =  x[holdSpace[1]][holdSpace[0]-1], x[holdSpace[1]][holdSpace[0]]
+        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]*holdSpace[0]-1] =  x[holdSpace[1]*holdSpace[0]-1], x[holdSpace[1]*holdSpace[0]]
         holdSpace[0] = holdSpace[0]-1
     elif direction == 'U':
-        x[holdSpace[1]][holdSpace[0]], x[holdSpace[1]-1][holdSpace[0]] =  x[holdSpace[1]-1][holdSpace[0]], x[holdSpace[1]][holdSpace[0]]
+        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]-1*holdSpace[0]] =  x[holdSpace[1]-1*holdSpace[0]], x[holdSpace[1]*holdSpace[0]]
         holdSpace[1] = holdSpace[1]-1
     elif direction == 'D':
-        x[holdSpace[1]][holdSpace[0]], x[holdSpace[1]+1][holdSpace[0]] =  x[holdSpace[1]+1][holdSpace[0]], x[holdSpace[1]][holdSpace[0]]
+        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]+1*holdSpace[0]] =  x[holdSpace[1]+1*holdSpace[0]], x[holdSpace[1]*holdSpace[0]]
         holdSpace[1] = holdSpace[1]+1
 
 def isAvailableMove(x,direction):
@@ -43,23 +43,30 @@ holdSpace = [2,2]
 
 arr = []
 
-x =  np.arange(1, 10).reshape(3,3)
-x[2,2] = -1
+j=0
+while j<1000:
 
-i=0
-arr.append(x)
-y=x.copy()
+    x =  np.arange(1, 10).reshape(9)
+    x[8] = -1
 
-while i<TRYTIME:
-    randomMove = random.choice(moves)
-    while not isAvailableMove(x,randomMove) :
+    i=0
+    arrOfBoards = []
+    arrOfBoards.append(x)
+    y=x.copy()
+
+    while i<TRYTIME:
         randomMove = random.choice(moves)
-    move(y,randomMove)
-    lastmove = '%s' % randomMove 
-    arr.append(y.copy())
-    i = i+1
+        while not isAvailableMove(x,randomMove) :
+            randomMove = random.choice(moves)
+        move(y,randomMove)
+        lastmove = '%s' % randomMove 
+        arrOfBoards.append(y.copy())
+        i = i+1
 
-print(np.array(arr))
+    arr.append(arrOfBoards)
+    j=j+1
+
+print(np.array(arr).shape)
 
 
 
