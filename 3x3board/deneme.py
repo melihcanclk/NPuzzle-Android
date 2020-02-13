@@ -1,6 +1,10 @@
 import numpy as np
 import random
 
+TRYTIME = 100
+
+lastmove = 'S'
+
 moves = ['L', 'R', 'U', 'D']
 
 def move(x, direction):
@@ -18,11 +22,22 @@ def move(x, direction):
         holdSpace[1] = holdSpace[1]+1
 
 def isAvailableMove(x,direction):
-    if (direction == 'R' and holdSpace[0] +1 < 3 ) or (direction == 'L' and holdSpace[0] -1 >= 0) or (direction == 'U' and holdSpace[1] -1 >= 0) or (direction == 'D' and holdSpace[1] +1 < 3):
+    if reverse(direction) == lastmove:
+        return False
+    elif (direction == 'R' and holdSpace[0] +1 < 3 ) or (direction == 'L' and holdSpace[0] -1 >= 0) or (direction == 'U' and holdSpace[1] -1 >= 0) or (direction == 'D' and holdSpace[1] +1 < 3):
         return True
     else:
         return False
 
+def reverse(direction):
+    if direction == 'R':
+        return 'L'
+    elif direction == 'L':
+        return 'R'
+    elif direction == 'U':
+        return 'D'
+    elif direction == 'D':
+        return 'U'
 
 holdSpace = [2,2]
 
@@ -35,11 +50,12 @@ i=0
 arr.append(x)
 y=x.copy()
 
-while i<100:
+while i<TRYTIME:
     randomMove = random.choice(moves)
     while not isAvailableMove(x,randomMove) :
         randomMove = random.choice(moves)
     move(y,randomMove)
+    lastmove = '%s' % randomMove 
     arr.append(y.copy())
     i = i+1
 
