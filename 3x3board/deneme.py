@@ -9,16 +9,16 @@ moves = ['L', 'R', 'U', 'D']
 
 def move(x, direction):
     if direction == 'R':
-        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]*holdSpace[0]+1] =  x[holdSpace[1]*holdSpace[0]+1], x[holdSpace[1]*holdSpace[0]]
+        x[index(x,holdSpace[0], holdSpace[1])], x[index(x,holdSpace[0]+1, holdSpace[1])] =  x[index(x,holdSpace[0] +1, holdSpace[1])], x[index(x,holdSpace[0], holdSpace[1])]
         holdSpace[0] = holdSpace[0]+1
     elif direction == 'L':
-        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]*holdSpace[0]-1] =  x[holdSpace[1]*holdSpace[0]-1], x[holdSpace[1]*holdSpace[0]]
+        x[index(x,holdSpace[0], holdSpace[1])], x[index(x,holdSpace[0]-1, holdSpace[1])] =  x[index(x,holdSpace[0]-1, holdSpace[1])], x[index(x,holdSpace[0], holdSpace[1])]
         holdSpace[0] = holdSpace[0]-1
     elif direction == 'U':
-        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]-1*holdSpace[0]] =  x[holdSpace[1]-1*holdSpace[0]], x[holdSpace[1]*holdSpace[0]]
+        x[index(x,holdSpace[0], holdSpace[1])], x[index(x,holdSpace[0], holdSpace[1] -1)] =  x[index(x,holdSpace[0], holdSpace[1] -1)], x[index(x,holdSpace[0], holdSpace[1])]
         holdSpace[1] = holdSpace[1]-1
     elif direction == 'D':
-        x[holdSpace[1]*holdSpace[0]], x[holdSpace[1]+1*holdSpace[0]] =  x[holdSpace[1]+1*holdSpace[0]], x[holdSpace[1]*holdSpace[0]]
+        x[index(x,holdSpace[0], holdSpace[1])], x[index(x,holdSpace[0], holdSpace[1] +1)] =  x[index(x,holdSpace[0], holdSpace[1] +1)], x[index(x,holdSpace[0], holdSpace[1])]
         holdSpace[1] = holdSpace[1]+1
 
 def isAvailableMove(x,direction):
@@ -39,12 +39,15 @@ def reverse(direction):
     elif direction == 'D':
         return 'U'
 
+def index(board, x,y):
+    return (y * 3) + x
+
 holdSpace = [2,2]
 
 arr = []
 
 j=0
-while j<1000:
+while j<2000:
 
     x =  np.arange(1, 10).reshape(9)
     x[8] = -1
@@ -66,7 +69,6 @@ while j<1000:
     arr.append(arrOfBoards)
     j=j+1
 
-print(np.array(arr).shape)
-
+print(np.array(arr))
 
 
