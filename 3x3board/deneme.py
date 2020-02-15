@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-TRYTIME = 199
+TRYTIME = 9
 
 lastmove = 'S'
 
@@ -42,17 +42,16 @@ def reverse(direction):
 def index(board, x,y):
     return (y * 3) + x
 
-holdSpace = [2,2]
-
 arr = []
 
 j=0
-while j<2000:
+while j<10:
 
     x =  np.arange(1, 10).reshape(9)
     x[8] = -1
 
     i=0
+    holdSpace = [2,2]
     arrOfBoards = []
     arrOfBoards.append(x)
     y=x.copy()
@@ -65,7 +64,8 @@ while j<2000:
         lastmove = '%s' % randomMove 
         arrOfBoards.append(y.copy())
         i = i+1
-
+    
+    arrOfBoards = np.flip(arrOfBoards,0)
     arr.append(arrOfBoards)
     j=j+1
 
