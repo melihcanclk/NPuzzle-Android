@@ -1,7 +1,9 @@
 import numpy as np
 import random
 
-TRYTIME = 9
+TRYTIME = 199
+
+TOTAL_NUMBER_OF_SCENEARIOS = 2000
 
 lastmove = 'S'
 
@@ -45,7 +47,7 @@ def index(board, x,y):
 arr = []
 
 j=0
-while j<10:
+while j<TOTAL_NUMBER_OF_SCENEARIOS:
 
     x =  np.arange(1, 10).reshape(9)
     x[8] = -1
@@ -69,6 +71,46 @@ while j<10:
     arr.append(arrOfBoards)
     j=j+1
 
-print(np.array(arr))
+# Importing the Keras libraries and packages
+from keras.models import Sequential
+from keras.layers import LSTM
+from keras.layers import Dense
+from keras.layers import Dropout
 
 
+X_train = []
+y_train = []
+
+
+for i in range(0,TOTAL_NUMBER_OF_SCENEARIOS):
+    for j in range(5, TRYTIME):
+        X_train.append(arr[i][j-5:j])
+        y_train.append(arr[i][j])
+       
+
+X_train, y_train = np.array(X_train), np.array(y_train)
+
+model = Sequential()
+
+model.add(LSTM(units = 50, return_sequences = True, input_shape = (5, 9)))
+model.add(Dropout(0.2))
+
+# Adding a second LSTM layer and some Dropout regularisation
+model.add(LSTM(units = 50, return_sequences = True))
+model.add(Dropout(0.2))
+
+# Adding a third LSTM layer and some Dropout regularisation
+model.add(LSTM(units = 50, return_sequences = True))
+model.add(Dropout(0.2))
+
+# Adding a fourth LSTM layer and some Dropout regularisation
+model.add(LSTM(units = 50))
+model.add(Dropout(0.2))
+
+# Adding the output layer
+model.add(Dense(units = 9))
+
+model.compile(optimizer = 'adam', loss = 'mean_squared_error', metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=3)
+
+print(history.history['acc'])
