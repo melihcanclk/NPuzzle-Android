@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
+import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
@@ -355,5 +356,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         return super.onTouchEvent(event);
     }
+
 }
 
