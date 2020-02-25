@@ -1,4 +1,4 @@
-package com.melihcanclk.npuzzle;
+package com.melihcanclk;
 
 import java.io.*;
 import java.util.Scanner;

@@ -19,17 +19,22 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
+    private static final int NUMBER_OF_SHUFFLE = 10;
     private static int columns;
     private static int rows;
 
     private static String COLUMN_NAME = "com.example.npuzzle/com.melihcanclk.MainActivity - column";
     private static String ROW_NAME = "com.melihcanclk - row";
 
-    public static final int SWIPE_THRESHOLD = 100;
-    public static final int SWIPE_VELOCITY_THRESHOLD = 100;
+    public static final int SWIPE_THRESHOLD = 10;
+    public static final int SWIPE_VELOCITY_THRESHOLD = 5;
+
+    char [] moves ;
 
     /**
      * Represents last move that a board did
@@ -63,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        String temp = "LRUD";
+        moves = temp.toCharArray();
         setContentView(R.layout.activity_main);
 
         extractDataFromIntent();
@@ -77,27 +83,64 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                _numberOfMoves = 0;
-                textViewCounter.setText(String.valueOf(_numberOfMoves));
-                Integer counter = 1;
-                for (int i = 0; i < rows; ++i) {
-                    for (int j = 0; j < columns; ++j) {
-                       textView[i][j].setText(counter.toString());
-                        if (i == rows - 1 && j == columns - 1) {
-                            textView[i][j].setText(" ");
-                            coordinatesOfSpace[1] = i;
-                            coordinatesOfSpace[0] = j;
-                        }
-                       ++counter;
-                    }
-                }
-
+                reset();
+                shuffle(NUMBER_OF_SHUFFLE);
             }
         });
 
         hintButton = (Button) findViewById(R.id.hintButton);
 
         createButtons();
+        shuffle(NUMBER_OF_SHUFFLE);
+    }
+
+    public boolean isSolved() {
+        int index = 1;
+        int a = 0;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                if(textView[i][j].getText().toString().equals(" ")){
+                    a = -1;
+                }else{
+                    a = Integer.parseInt(textView[i][j].getText().toString());
+                }
+                if (index == a) {
+                }else {
+                    if (i != rows - 1 || j != columns - 1) {
+                        return false;
+                    }
+                }
+                index++;
+            }
+        }
+        return true;
+    }
+    private void shuffle(int numberOfShuffle){
+        Random random = new Random();
+        for (int i = 0; i< numberOfShuffle;++i){
+            int randomMove = random.nextInt(moves.length);
+            while(!isValid(moves[randomMove]))
+                randomMove = random.nextInt(moves.length);
+            move(moves[randomMove]);
+        }
+        _numberOfMoves = 0;
+    }
+
+    private void reset(){
+        _numberOfMoves = 0;
+        textViewCounter.setText(String.valueOf(_numberOfMoves));
+        Integer counter = 1;
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                textView[i][j].setText(counter.toString());
+                if (i == rows - 1 && j == columns - 1) {
+                    textView[i][j].setText(" ");
+                    coordinatesOfSpace[1] = i;
+                    coordinatesOfSpace[0] = j;
+                }
+                ++counter;
+            }
+        }
     }
 
     private void extractDataFromIntent() {
@@ -195,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
         if (isValid(direction)) {
             _lastMove = direction;
-            _numberOfMoves++;
             System.out.println("Moved to " + direction);
         }
     }
@@ -205,11 +247,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if ((direction == 'L' || direction == 'l') && coordinatesOfSpace[0] - 1 >= 0) {
             return true;
             // TODO : size 0 and size 1 add
-        } else if ((direction == 'R' || direction == 'r') && coordinatesOfSpace[0] + 1 < rows) {
+        } else if ((direction == 'R' || direction == 'r') && coordinatesOfSpace[0] + 1 < columns) {
             return true;
         } else if ((direction == 'U' || direction == 'u') && coordinatesOfSpace[1] - 1 >= 0) {
             return true;
-        } else if ((direction == 'D' || direction == 'd') && coordinatesOfSpace[1] + 1 < columns) {
+        } else if ((direction == 'D' || direction == 'd') && coordinatesOfSpace[1] + 1 < rows) {
             return true;
         } else {
             return false;
@@ -276,7 +318,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 result = true;
             }
         }
+        if(isSolved()){
+            Toast.makeText(this, "Puzzle Solved!!!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         if(result){
+            ++_numberOfMoves;
             textViewCounter.setText(String.valueOf(_numberOfMoves));
         }
         return result;

@@ -32,8 +32,8 @@ public class Main_Menu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Everytime user click this button, new second activity will be launched
-                int column = Integer.parseInt(spinner1.getSelectedItem().toString());
-                int row = Integer.parseInt(spinner2.getSelectedItem().toString());
+                int row = Integer.parseInt(spinner1.getSelectedItem().toString());
+                int column = Integer.parseInt(spinner2.getSelectedItem().toString());
 
                 //pass mainActivity values of spinners
                 Intent intent = MainActivity.makeIntent(Main_Menu.this,column,row);
