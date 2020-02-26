@@ -1,0 +1,5 @@
+<root>
+    <item name='org.tensorflow.lite.Interpreter'>
+        <annotation name='java.lang.Deprecated' />
+    </item>
+</root>
