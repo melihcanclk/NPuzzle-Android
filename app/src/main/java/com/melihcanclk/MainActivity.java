@@ -104,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             public void onClick(View v) {
                 reset();
                 shuffle(NUMBER_OF_SHUFFLE);
+
+                while(!isSolved()){
+
+                }
             }
         });
 
