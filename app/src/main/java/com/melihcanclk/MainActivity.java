@@ -29,11 +29,14 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.RandomAccess;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
-    private static final int NUMBER_OF_SHUFFLE = 10;
+    private static int NUMBER_OF_SHUFFLE;
     private static int columns;
     private static int rows;
 
@@ -105,13 +108,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         });
 
         hintButton = (Button) findViewById(R.id.hintButton);
-       hintButton.setOnClickListener(new View.OnClickListener() {
+        hintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 float [] arr = new  float[4];
                 List<Integer> convertedTextView = mode(textView);
                 arr = doInferance(convertedTextView);
-                System.out.println(arr[0] + " " + arr[1] + " " + arr[2] + " " + arr[3]);
+                move(moves[findClosestToOne(arr)]);
+                if(isSolved()){
+
+                    Toast.makeText(getApplicationContext(), "Puzzle Solved!!!", LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
 
@@ -119,20 +127,32 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         shuffle(NUMBER_OF_SHUFFLE);
     }
 
+    private int findClosestToOne(float[] arr) {
+        int myNumber = 1;
+        float distance = Math.abs(arr[0] - myNumber);
+        int idx = 0;
+        for(int c = 1; c < arr.length; c++){
+            float cdistance = Math.abs(arr[c] - myNumber);
+            if(cdistance < distance){
+                idx = c;
+                distance = cdistance;
+            }
+        }
+       return idx;
+
+    }
+
     private float [] doInferance(List<Integer> convertedTextView) {
-        int [][][] array= new int[1][1][81];
+        float [][][] array= new float[1][1][81];
         for (int i = 0; i< convertedTextView.size();i++)
             array[0][0][i] = convertedTextView.get(i);
 
-        float [] output = new float[4];
+        float [][] output = new float[1][4];
         interpreter.run(array,output);
 
-        return output;
+        return output[0];
     }
 
-    private int getIndex(int x, int y) {
-        return (9 * y) + x;
-    }
 
     public static List<Integer> mode(TextView [][] arr) {
         List<Integer> list = new ArrayList<>();
@@ -212,8 +232,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Intent intent = getIntent();
         columns = intent.getIntExtra(COLUMN_NAME, 3);
         rows = intent.getIntExtra(ROW_NAME,3);
-
         textView = new TextView[rows][columns];
+        Random random = new Random();
+        NUMBER_OF_SHUFFLE = random.nextInt(rows * columns);
+        while (NUMBER_OF_SHUFFLE <= 3){
+            NUMBER_OF_SHUFFLE = random.nextInt();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -242,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 GradientDrawable gd = new GradientDrawable();
                 gd.setStroke(2, 0xFF000000);
                 tempTextView.setBackground(gd);
+                tempTextView.setBackgroundResource(R.color.mutedpink);
                /* tempTextView.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         showMessage(FINAL_J, FINAL_I);
@@ -302,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if (isValid(direction)) {
             _lastMove = direction;
             System.out.println("Moved to " + direction);
+            ++_numberOfMoves;
+            textViewCounter.setText(String.valueOf(_numberOfMoves));
+
         }
     }
 
@@ -323,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private void showMessage(int x, int y) {
         Toast.makeText(MainActivity.this, " " + x + "," + y,
-                Toast.LENGTH_SHORT).show();
+                LENGTH_SHORT).show();
 
     }
 
@@ -383,33 +411,29 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             }
         }
         if(isSolved()){
-            Toast.makeText(this, "Puzzle Solved!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Puzzle Solved!!!", LENGTH_SHORT).show();
             finish();
-        }
-        if(result){
-            ++_numberOfMoves;
-            textViewCounter.setText(String.valueOf(_numberOfMoves));
         }
         return result;
     }
 
     private void onSwipeTop() {
-        Toast.makeText(this, "Swipe Top", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Swipe Top", LENGTH_SHORT).show();
         move('u');
     }
 
     private void onSwipeBottom() {
-        Toast.makeText(this, "Swipe Bottom", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Swipe Bottom", LENGTH_SHORT).show();
         move('d');
     }
 
     private void onSwipeLeft() {
-        Toast.makeText(this, "Swipe Left", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Swipe Left", LENGTH_SHORT).show();
         move('l');
     }
 
     private void onSwipeRight() {
-        Toast.makeText(this, "Swipe Right", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Swipe Right", LENGTH_SHORT).show();
         move('r');
     }
 
