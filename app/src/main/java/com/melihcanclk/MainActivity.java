@@ -1,11 +1,9 @@
 package com.melihcanclk;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +17,18 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.tensorflow.lite.Interpreter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
@@ -51,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     TextView[][] textView;
     Button resetButton;
     Button hintButton;
+    Interpreter interpreter;
 
     private int[] coordinatesOfSpace = new int[2];
 
@@ -73,6 +82,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         moves = temp.toCharArray();
         setContentView(R.layout.activity_main);
 
+        try {
+            interpreter = new Interpreter(loadModelFile("3","3"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         extractDataFromIntent();
         gestureDetector = new GestureDetector(this);
 
@@ -90,10 +105,57 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         });
 
         hintButton = (Button) findViewById(R.id.hintButton);
+       hintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float [] arr = new  float[4];
+                List<Integer> convertedTextView = mode(textView);
+                arr = doInferance(convertedTextView);
+                System.out.println(arr[0] + " " + arr[1] + " " + arr[2] + " " + arr[3]);
+            }
+        });
 
         createButtons();
         shuffle(NUMBER_OF_SHUFFLE);
     }
+
+    private float [] doInferance(List<Integer> convertedTextView) {
+        int [][][] array= new int[1][1][81];
+        for (int i = 0; i< convertedTextView.size();i++)
+            array[0][0][i] = convertedTextView.get(i);
+
+        float [] output = new float[4];
+        interpreter.run(array,output);
+
+        return output;
+    }
+
+    private int getIndex(int x, int y) {
+        return (9 * y) + x;
+    }
+
+    public static List<Integer> mode(TextView [][] arr) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            // tiny change 1: proper dimensions
+            for (int j = 0; j <9; j++) {
+                if(i < rows && j < columns){
+                    if(arr[i][j].getText().toString().equals(" ")){
+                        list.add(-1);
+                    }else {
+                        int number = Integer.parseInt(arr[i][j].getText().toString());
+                        list.add(number);
+                    }
+
+                }else{
+                    list.add(0);
+                }
+
+            }
+        }
+        return list;
+    }
+
 
     public boolean isSolved() {
         int index = 1;
@@ -302,9 +364,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             // right or left swipe
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffX > 0) {
-                    onSwipeRight();
-                } else {
                     onSwipeLeft();
+                } else {
+                    onSwipeRight();
+
                 }
                 result = true;
             }
@@ -312,9 +375,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             // up or down swipe
             if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffY > 0) {
-                    onSwipeBottom();
-                } else {
                     onSwipeTop();
+                } else {
+                    onSwipeBottom();
                 }
                 result = true;
             }
@@ -355,6 +418,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         gestureDetector.onTouchEvent(event);
 
         return super.onTouchEvent(event);
+    }
+
+    private MappedByteBuffer loadModelFile(String size_x, String size_y) throws IOException{
+        String filename = "model_" + size_x.toString() + "x" + size_y.toString() + ".tflite";
+        AssetFileDescriptor fileDescriptor = this.getAssets().openFd(filename);
+        FileInputStream fileInputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = fileInputStream.getChannel();
+        long startOffSet = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffSet,declaredLength);
+
     }
 
 }
