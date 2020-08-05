@@ -4,11 +4,11 @@
 
 <h3>Screenshots</h3>
 <div>
-  <img src = "https://i.ibb.co/CJ5s7vH/Screenshot-1596656566.png" width = "180" height = "400">
-  <img src = "https://i.ibb.co/r0CgCtZ/Screenshot-1596656584.png" width = "180" height = "400">
-  <img src = "https://i.ibb.co/LZD1PrY/Screenshot-1596656603.png" width = "180" height = "400">
-  <img src = "https://i.ibb.co/cTQm4t3/Screenshot-1596656945.png" width = "180" height = "400">
-  <img src = "https://i.ibb.co/x1pqTwB/Screenshot-1596656947.png" width = "180" height = "400">
+  <img src = "https://i.ibb.co/CJ5s7vH/Screenshot-1596656566.png" width = "160" height = "400">
+  <img src = "https://i.ibb.co/r0CgCtZ/Screenshot-1596656584.png" width = "160" height = "400">
+  <img src = "https://i.ibb.co/LZD1PrY/Screenshot-1596656603.png" width = "160" height = "400">
+  <img src = "https://i.ibb.co/cTQm4t3/Screenshot-1596656945.png" width = "160" height = "400">
+  <img src = "https://i.ibb.co/x1pqTwB/Screenshot-1596656947.png" width = "160" height = "400">
 </div>
 
 <h3>Recommendations</h3>
